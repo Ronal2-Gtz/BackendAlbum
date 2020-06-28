@@ -1,48 +1,19 @@
 const express = require('express')
+const bodyParser = require('body-parser')
+
+require('dotenv').config();
+
 const app = express()
 
-const port = 3000
+//config Midelware 
+app.use(bodyParser.urlencoded({extended:false}))
+app.use(bodyParser.json())
 
-app.get('/getImages', (req, res) => {
 
-    res.json({
-        menssage: "Get Images"
-    })
-})
+const port = process.env.PORT || 8282
 
-app.get('/getImage/:id', (req, res) => {
+app.use(require('./routes/routeImage'))
 
-    const id = req.params.id
-
-    res.json({
-        menssage: "Get Image",
-        id
-    })
-})
-
-app.post('/createImage', (req, res) => {
-    res.json({
-        menssage: "Create Image"
-    })
-})
-app.put('/updateImage/:id', (req, res) => {
-
-    const id = req.params.id
-
-    res.json({
-        menssage: "Update Image",
-        id
-    })
-})
-app.delete('/deleteImage/:id', (req, res) => {
-
-    const id = req.params.id
-
-    res.json({
-        menssage: "Delete Image",
-        id
-    })
-})
 
 app.listen(port, () => {
     console.log(`servidor corriendo en el puerto ${port}`)
