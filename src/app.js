@@ -24,7 +24,7 @@ mongoose.connect(
   }
 );
 
-app.use(require("./routes/routeImage"));
+app.use(require("./routes/imageRoute"));
     
 app.listen(port, () => {
   console.log(`server on port ${port}`);
