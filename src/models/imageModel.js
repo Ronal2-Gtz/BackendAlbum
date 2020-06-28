@@ -5,6 +5,7 @@ let Schema = mongoose.Schema
 let imageSchema = new Schema({
     name: {
         type: String,
+        required: [true, 'El nombre es requerido']
     },
     image: {
         type: String,

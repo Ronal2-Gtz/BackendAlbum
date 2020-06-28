@@ -39,13 +39,15 @@ app.put("/updateImage/:id", (req, res) => {
   });
 });
 
-app.delete("/deleteImage/:id", (req, res) => {
+app.delete("/deleteImage/:id", async (req, res) => {
   const id = req.params.id;
 
-  res.json({
-    menssage: "Delete Image",
-    id,
-  });
+  try {
+    const deleteImage = await Image.findByIdAndDelete(id);
+    res.json({ ok: true, menssage: "Delet image" });
+  } catch (err) {
+    return messagueError(res, 404, err);
+  }
 });
 
 module.exports = app;
