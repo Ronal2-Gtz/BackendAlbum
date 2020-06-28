@@ -8,7 +8,7 @@ let imageSchema = new Schema({
     },
     image: {
         type: String,
-        required: [true, 'La ruta es requerida']
+        required: [true, 'La imagen es requerida']
     },
     date: {
         type: Date,
@@ -18,4 +18,4 @@ let imageSchema = new Schema({
     timestamps: true
 })
 
-module.exports = model('Image', imageSchema)
+module.exports = mongoose.model('Image', imageSchema)

@@ -1,48 +1,51 @@
-const express = require('express')
-const app = express()
+const express = require("express");
+const Image = require("../models/imageModel");
+const { messagueError } = require("../helper");
+const app = express();
 
-app.get('/getImages', (req, res) => {
+app.get("/getImages", async (req, res) => {});
 
-    res.json({
-        menssage: "Get Images"
-    })
-})
+app.get("/getImage/:id", (req, res) => {
+  const id = req.params.id;
 
-app.get('/getImage/:id', (req, res) => {
+  res.json({
+    menssage: "Get Image",
+    id,
+  });
+});
 
-    const id = req.params.id
+app.post("/createImage", async (req, res) => {
+  const body = req.body;
 
-    res.json({
-        menssage: "Get Image",
-        id
-    })
-})
+  const image = new Image({
+    name: body.name,
+    image: body.image,
+  });
 
-app.post('/createImage', (req, res) => {
+  try {
+    const newImage = await image.save();
+    res.json({ ok: true, image: newImage });
+  } catch (err) {
+    messagueError(res, 404, err);
+  }
+});
 
-    const body = req.body
+app.put("/updateImage/:id", (req, res) => {
+  const id = req.params.id;
 
-    res.json({
-       body
-    })
-})
-app.put('/updateImage/:id', (req, res) => {
+  res.json({
+    menssage: "Update Image",
+    id,
+  });
+});
 
-    const id = req.params.id
+app.delete("/deleteImage/:id", (req, res) => {
+  const id = req.params.id;
 
-    res.json({
-        menssage: "Update Image",
-        id
-    })
-})
-app.delete('/deleteImage/:id', (req, res) => {
+  res.json({
+    menssage: "Delete Image",
+    id,
+  });
+});
 
-    const id = req.params.id
-
-    res.json({
-        menssage: "Delete Image",
-        id
-    })
-})
-
-module.exports = app
+module.exports = app;
