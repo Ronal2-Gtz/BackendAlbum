@@ -1,17 +1,38 @@
 const express = require("express");
 const Image = require("../models/imageModel");
 const { messagueError } = require("../helper");
+const { findByIdAndUpdate } = require("../models/imageModel");
 const app = express();
 
-app.get("/getImages", async (req, res) => {});
+app.get("/getImages", async (req, res) => {
+  const skip = Number(req.query.skip || 0);
+  const limit = Number(req.query.next || 5);
 
-app.get("/getImage/:id", (req, res) => {
+  try {
+    const totalImages = await Image.count({});
+    const listImages = await Image.find({}).skip(skip).limit(limit);
+    res.json({
+      ok: true,
+      Total: totalImages,
+      images: listImages,
+    });
+  } catch (err) {
+    messagueError(res, 404, err);
+  }
+});
+
+app.get("/getImage/:id", async (req, res) => {
   const id = req.params.id;
 
-  res.json({
-    menssage: "Get Image",
-    id,
-  });
+  try {
+      const image = await Image.findById(id)
+      res.json({
+        ok: true,
+        image
+      });
+  } catch (err) {
+    messagueError(res, 404, err);
+  }
 });
 
 app.post("/createImage", async (req, res) => {
@@ -30,13 +51,20 @@ app.post("/createImage", async (req, res) => {
   }
 });
 
-app.put("/updateImage/:id", (req, res) => {
+app.put("/updateImage/:id", async (req, res) => {
   const id = req.params.id;
+  const { name, image } = req.body;
 
-  res.json({
-    menssage: "Update Image",
-    id,
-  });
+  try {
+    const updateImage = await Image.findByIdAndUpdate(
+      id,
+      { name, image },
+      { new: true }
+    );
+    res.json({ ok: true, menssage: "Image Update", image: updateImage });
+  } catch (err) {
+    messagueError(res, 404, err);
+  }
 });
 
 app.delete("/deleteImage/:id", async (req, res) => {
