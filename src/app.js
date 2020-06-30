@@ -8,7 +8,7 @@ require("dotenv").config();
 const app = express();
 
 const port = process.env.PORT || 8282;
-const url_db = process.env.URL_DB || "mongodb://localhost:27017/img";
+const url_db = 'mongodb+srv://ronal2:qPopKTPX5AfUvnbl@cluster0-znt1w.mongodb.net/cafe'
 
 //config Midelware - bodyParser
 app.use(bodyParser.urlencoded({ extended: false }));

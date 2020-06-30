@@ -4,7 +4,7 @@
   "description": "Api",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon ./src/app"
+    "start": "node ./src/app"
   },
   "author": "Ronal2-Gtz",
   "license": "ISC",
