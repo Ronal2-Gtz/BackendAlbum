@@ -1,8 +1,12 @@
 const express = require("express");
 const Image = require("../models/imageModel");
+const fileUpload = require('express-fileupload')
+const uuid = require('uuid')
 const { messagueError } = require("../helper");
-const { findByIdAndUpdate } = require("../models/imageModel");
+
 const app = express();
+
+app.use(fileUpload());
 
 app.get("/getImages", async (req, res) => {
   const skip = Number(req.query.skip || 0);
@@ -36,18 +40,41 @@ app.get("/getImage/:id", async (req, res) => {
 });
 
 app.post("/createImage", async (req, res) => {
-  const body = req.body;
+  const namedb = req.body.name;
+
+  const validExtensions = ["png", "jpg", "gif", "jpeg"];
+
+  const dataImage = req.files.dataImage;
+  const nameImage = dataImage.name.split(".");
+  const extensionImage = nameImage[nameImage.length - 1];
+
+  const nameFile = `${namedb}-${dataImage.name}-${uuid.v4()}.${extensionImage}`;
+
+  const routeImage = nameFile
 
   const image = new Image({
-    name: body.name,
-    image: body.image,
+    name: namedb,
+    image: routeImage,
   });
+
+  if (!req.files || Object.keys(req.files).length === 0) {
+    return res.status(400).send("No files were uploaded.");
+  }
+
+  if (validExtensions.indexOf(extensionImage) < 0) {
+    return messagueError(
+      res,
+      400,
+      `Invalid extension - extensions allowed [ ${validExtensions.join(" - ")} ]`
+    );
+  }
 
   try {
     const newImage = await image.save();
-    res.json({ ok: true, image: newImage });
+    await dataImage.mv(`img/${nameFile}`);
+    res.json({ ok: true, messague: "Uploaded image", image: newImage });
   } catch (err) {
-    messagueError(res, 404, err);
+    return messagueError(res, 500, err);
   }
 });
 

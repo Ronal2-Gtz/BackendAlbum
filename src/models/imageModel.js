@@ -8,8 +8,7 @@ let imageSchema = new Schema({
         required: [true, 'El nombre es requerido']
     },
     image: {
-        type: String,
-        required: [true, 'La imagen es requerida']
+        type: String
     },
     date: {
         type: Date,

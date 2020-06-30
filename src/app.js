@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+const fileUpload = require("express-fileupload");
 
 require("dotenv").config();
 
@@ -9,7 +10,7 @@ const app = express();
 const port = process.env.PORT || 8282;
 const url_db = process.env.URL_DB || "mongodb://localhost:27017/img";
 
-//config Midelware
+//config Midelware - bodyParser
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
