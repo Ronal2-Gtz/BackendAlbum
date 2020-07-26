@@ -7,6 +7,10 @@ let imageSchema = new Schema({
         type: String,
         required: [true, 'El nombre es requerido']
     },
+    nameImage:{
+        type: String,
+        required: [true, 'el nombre es requerido']
+    },
     image: {
         type: String
     },

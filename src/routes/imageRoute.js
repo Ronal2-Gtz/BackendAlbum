@@ -2,7 +2,7 @@ const express = require("express");
 const Image = require("../models/imageModel");
 const fileUpload = require('express-fileupload')
 const uuid = require('uuid')
-const { messagueError } = require("../helper");
+const { messagueError,eliminarImg} = require("../helper");
 
 const app = express();
 
@@ -13,8 +13,8 @@ app.get("/getImages", async (req, res) => {
   const limit = Number(req.query.next || 5);
 
   try {
-    const totalImages = await Image.count({});
-    const listImages = await Image.find({}).skip(skip).limit(limit);
+    const totalImages = await Image.countDocuments({});
+    const listImages = await Image.find({})//.skip(skip).limit(limit);
     res.json({
       ok: true,
       Total: totalImages,
@@ -50,11 +50,13 @@ app.post("/createImage", async (req, res) => {
 
   const nameFile = `${namedb}-${dataImage.name}-${uuid.v4()}.${extensionImage}`;
 
-  const routeImage = nameFile
+  const fullUrl = `${req.protocol}://${req.get('Host')}/img/${nameFile}`;
+ 
 
   const image = new Image({
     name: namedb,
-    image: routeImage,
+    nameImage: nameFile,
+    image: fullUrl,
   });
 
   if (!req.files || Object.keys(req.files).length === 0) {
@@ -71,38 +73,44 @@ app.post("/createImage", async (req, res) => {
 
   try {
     const newImage = await image.save();
-    await dataImage.mv(`img/${nameFile}`);
+    await dataImage.mv(`src/img/${nameFile}`);
     res.json({ ok: true, messague: "Uploaded image", image: newImage });
   } catch (err) {
     return messagueError(res, 500, err);
   }
 });
 
-app.put("/updateImage/:id", async (req, res) => {
-  const id = req.params.id;
-  const { name, image } = req.body;
+// app.put("/updateImage/:id", async (req, res) => {
+//   const id = req.params.id;
+//   const { name, image } = req.body;
 
-  try {
-    const updateImage = await Image.findByIdAndUpdate(
-      id,
-      { name, image },
-      { new: true }
-    );
-    res.json({ ok: true, menssage: "Image Update", image: updateImage });
-  } catch (err) {
-    messagueError(res, 404, err);
-  }
-});
+//   try {
+//     const updateImage = await Image.findByIdAndUpdate(
+//       id,
+//       { name, image },
+//       { new: true }
+//     );
+//     res.json({ ok: true, menssage: "Image Update", image: updateImage });
+//   } catch (err) {
+//     messagueError(res, 404, err);
+//   }
+// });
 
 app.delete("/deleteImage/:id", async (req, res) => {
   const id = req.params.id;
 
   try {
+    const dataImage = await Image.findById(id)
+    eliminarImg(dataImage.nameImage)
     const deleteImage = await Image.findByIdAndDelete(id);
     res.json({ ok: true, menssage: "Delet image" });
   } catch (err) {
     return messagueError(res, 404, err);
   }
+  
 });
+
+
+
 
 module.exports = app;
